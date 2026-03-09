@@ -153,6 +153,8 @@
         props   (get profile :props)
         section (get data :name)
         team    (mf/deref refs/team)
+        params-release-notes
+        (-> route :params :query :release-notes)
 
 
         show-question-modal?
@@ -173,11 +175,12 @@
              (:is-default team))
 
         show-release-modal?
-        (and (contains? cf/flags :onboarding)
-             (not (contains? cf/flags :hide-release-modal))
-             (:onboarding-viewed props)
-             (not= (:release-notes-viewed props) (:main cf/version))
-             (not= "0.0" (:main cf/version)))]
+        (or (and (contains? cf/flags :onboarding)
+                 (not (contains? cf/flags :hide-release-modal))
+                 (:onboarding-viewed props)
+                 (not= (:release-notes-viewed props) (:main cf/version))
+                 (not= "0.0" (:main cf/version)))
+            (= params-release-notes "show"))]
 
     [:& (mf/provider ctx/current-route) {:value route}
      (case section
